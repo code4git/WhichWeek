@@ -1,1 +1,38 @@
-/* Empty. Add your own CSS if you like */
+@font-face {
+    font-family: 'rbno2_1ahairline';
+    src: url('../fonts/rene_bieder_-_rbno2.1a-hairline-webfont.eot');
+    src: url('../fonts/rene_bieder_-_rbno2.1a-hairline-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/rene_bieder_-_rbno2.1a-hairline-webfont.woff') format('woff'),
+         url('../fonts/rene_bieder_-_rbno2.1a-hairline-webfont.ttf') format('truetype'),
+         url('../fonts/rene_bieder_-_rbno2.1a-hairline-webfont.svg#rbno2.1ahairline') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'rbno2.1alight';
+    src: url('../fonts/rene_bieder_-_rbno2.1a-light-webfont.eot');
+    src: url('../fonts/rene_bieder_-_rbno2.1a-light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/rene_bieder_-_rbno2.1a-light-webfont.woff') format('woff'),
+         url('../fonts/rene_bieder_-_rbno2.1a-light-webfont.ttf') format('truetype'),
+         url('../fonts/rene_bieder_-_rbno2.1a-light-webfont.svg#rbno2.1alight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+* {margin: 0; padding: 0; line-height: 1;}
+body, html {width:100%; height: 100%;}
+.touch {margin-top: 30px; position: relative; }
+.date_text {font-family: 'rbno2.1alight', "HelveticaNeue-Light","Helvetica Neue Light","Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif; text-transform: uppercase;text-align: center;  color: rgb(156,156,156); font-size: 40px;font-size: 10vmin; }
+.week_text {width:300px;  display: block;font-family: 'rbno2_1ahairline', "Helvetica Neue",Helvetica,Arial,"Lucida Grande",sans-serif, Arial;text-align: center; height: 100%; color: rgb(201,0,35); font-size: 25em;  }
+.linkweek {font-size: 2em; display: block;z-index: 999; top: 50%; width: 50px;
+height: 50px;
+margin-top: -25px;
+background: url("../img/buttons.png") 0 0 no-repeat;}
+.prevweek {position: absolute; left:30px; background-position: 0 -50px;}
+.nextweek {position: absolute; right:30px;}
+.linkweek:hover {background: url("../img/buttons-hover.png") no-repeat;}
+.prevweek:hover {background-position: 0 -50px;}
+.table {
+    margin-top: 35px;
+}
