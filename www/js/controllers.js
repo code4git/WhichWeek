@@ -1,36 +1,97 @@
-app.controller('AppCtrl', function($scope, $state, $window) {
+app.controller('AppCtrl', function($scope, $state, $window, $ionicSlideBoxDelegate) {
     
-    var today = new Date();
-    var checkDate = new Date();
-    var startDatein;
-    var endDatein;
-    var sundayCountry = {"pt-BR":"pr-BR", "es-419":"es-419", "en-US":"en-US", "en-us":"en-us", "ja":"ja", "ja-JP":"ja-JP", "fr-ca":"fr-ca", "es-ar":"es-ar","es-bo":"es-bo","es-ve":"es-ve","es-gt":"es-gt","es-hn":"es-hn","es-do":"es-do","es-co":"es-co","es-cr":"es-cr","es-mx":"es-mx","es-pa":"es-pa","es-ni":"es-ni","es-py":"es-py","es-pe":"es-pe","es-pr":"es-pr","es-sv":"es-sv","es-uy":"es-uy","es-cl":"es-cl","es-ec":"es-ec","zh":"zh","zh-hk":"zh-hk","zh-CN":"zh-CN","zh-sg":"zh-sg","zh-TW":"zh-TW","vi":"vi"};
-    var monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-    var countryforWeek = navigator.language;
-
-    // get week number
-    checkDate.setDate(checkDate.getDate() + 4 - (checkDate.getDay() || 7)); // Thursday
-    var time = checkDate.getTime();
-    checkDate.setMonth(0); // Compare with Jan 1
-    checkDate.setDate(1);
-    var week = Math.floor(Math.round((time - checkDate) / 86400000) / 7) + 1;
-
-
-    if (countryforWeek in sundayCountry) {
-      startDatein = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
-      endDatein = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()+6);
-    } else {
-    if (today.getDay() == 0) {
-        startDatein = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()-6);
-        endDatein = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay());
-      } else {
-        startDatein = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()+1);
-        endDatein = new Date(today.getFullYear(), today.getMonth(), today.getDate() - today.getDay()+7);
-      }
+    if($window.StatusBar) {
+        $scope.statusBar = StatusBar.hide();
     }
-        
-        var startDate = new Date(startDatein.getFullYear(), startDatein.getMonth(), startDatein.getDate());
-        var endDate = new Date(endDatein.getFullYear(), endDatein.getMonth(), endDatein.getDate());
+ 
+    // start variables for Week Counter
+    var startDatein,
+        endDatein,
+        sundayCountry = {"pt-BR":"pr-BR", "es-419":"es-419", "en-US":"en-US", "en-us":"en-us", "ja":"ja", "ja-JP":"ja-JP", "fr-ca":"fr-ca", "es-ar":"es-ar","es-bo":"es-bo","es-ve":"es-ve","es-gt":"es-gt","es-hn":"es-hn","es-do":"es-do","es-co":"es-co","es-cr":"es-cr","es-mx":"es-mx","es-pa":"es-pa","es-ni":"es-ni","es-py":"es-py","es-pe":"es-pe","es-pr":"es-pr","es-sv":"es-sv","es-uy":"es-uy","es-cl":"es-cl","es-ec":"es-ec","zh":"zh","zh-hk":"zh-hk","zh-CN":"zh-CN","zh-sg":"zh-sg","zh-TW":"zh-TW","vi":"vi"},
+        monthName = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        countryforWeek = navigator.language,
+        WeekStartDate,
+        WeekEndDate,
+        day;
+    
+    $scope.date;
+
+    // function for week counting
+    $scope.weekCounter =  function (a) {
+      
+      var checkDate = new Date(); // current date on user device
+      checkDate.setDate(checkDate.getDate() + a); // set date for current slide
+      var firstJan = new Date(checkDate.getFullYear(),0,1); // set first January of current date year
+      var dayOfWeekYear; //the day of week the year begins on
+      var weeknum; //variable for week num
+      var dayOfYear = Math.floor((checkDate.getTime() - firstJan.getTime() - (checkDate.getTimezoneOffset()-firstJan.getTimezoneOffset())*60000)/86400000) + 1; //get current day number
+      day = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() + 7); // get current date for showing
+
+      //check start day of week by country
+      if (countryforWeek in sundayCountry) {
+        startDatein = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - checkDate.getDay()); //set start day of the week
+        endDatein = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - checkDate.getDay()+6); //set end day of the week
+        dayOfWeekYear = firstJan.getDay() - 0; 
+        dayOfWeekYear = (dayOfWeekYear >= 0 ? dayOfWeekYear : dayOfWeekYear + 7);
+    
+        //if the year starts before the middle of a week
+        if(dayOfWeekYear <= 4) {
+  
+          weeknum = Math.floor((dayOfYear+dayOfWeekYear-1)/7) + 1;
+
+          if(weeknum > 52 || weeknum == 0) {
+
+            nYear = new Date(checkDate.getFullYear() + 1,0,1);
+            nday = nYear.getDay() - 0;
+            nday = nday >= 0 ? nday : nday + 7;
+            
+            weeknum = nday <= 4 ? 1 : 53; 
+            //if the next year starts before the middle of the week, it is week #1 of that year
+          }
+        } else {
+          weeknum = Math.floor((dayOfYear+dayOfWeekYear-1)/7);
+        }
+      } else {
+        dayOfWeekYear = firstJan.getDay() - 1;
+        dayOfWeekYear = (dayOfWeekYear >= 0 ? dayOfWeekYear : dayOfWeekYear + 7);
+        if (checkDate.getDay() == 0) {
+          startDatein = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - checkDate.getDay()-6);
+          endDatein = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - checkDate.getDay());
+        } else {
+            startDatein = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - checkDate.getDay()+1);
+          endDatein = new Date(checkDate.getFullYear(), checkDate.getMonth(), checkDate.getDate() - checkDate.getDay()+7);
+        }
+     
+        //if the year starts before the middle of a week
+        if(dayOfWeekYear < 4) {
+          
+        weeknum = Math.floor((dayOfYear+dayOfWeekYear-1)/7) + 1;
+          
+          if(weeknum > 52) {
+            nYear = new Date(checkDate.getFullYear() + 1,0,1);
+            nday = nYear.getDay() - 1;
+            nday = nday >= 0 ? nday : nday + 7;
+          
+            weeknum = nday < 4 ? 1 : 53; //if the next year starts before the middle of the week, it is week #1 of that year
+          }
+        } else {
+          weeknum = Math.floor((dayOfYear+dayOfWeekYear-1)/7);
+        }
+      }
+       
+      var WeekStartDate = new Date(startDatein.getFullYear(), startDatein.getMonth(), startDatein.getDate());
+      var WeekEndDate = new Date(endDatein.getFullYear(), endDatein.getMonth(), endDatein.getDate());
+
+      $scope.day = getLocaleShortDateString(day, true); //show day in local format
+      $scope.weekPeriod = getLocaleShortDateString(WeekStartDate, false) + " - " + getLocaleShortDateString(WeekEndDate, false); //show Week Period in local format
+
+      if (weeknum == 0) {
+        weeknum = 53;
+      }
+      
+      return weeknum;
+    
+    }
 
     //get Date in Local Date Formate
     function getLocaleShortDateString(d, needyear) {
@@ -59,8 +120,65 @@ app.controller('AppCtrl', function($scope, $state, $window) {
        }
     }
 
-    $scope.day = getLocaleShortDateString(today, true);
-    $scope.week = week;
-    $scope.weeks = getLocaleShortDateString(startDate, false) + " - " + getLocaleShortDateString(endDate, false);
+    // function for slide creating
+    var makeSlide = function ( nr, data ) {
+      return angular.extend( data, {
+        nr : nr
+      });
+    };
+  
+    var default_slides_indexes = [ -1, 0, 1 ], //slide array
+        default_slides = [
+          makeSlide( default_slides_indexes[ 0 ], {
+            title : 'previous week'
+          }),
+          makeSlide( default_slides_indexes[ 1 ], {
+            title : 'current week'
+          }),
+          makeSlide( default_slides_indexes[ 2 ], {
+            title : 'next week'
+          })
+        ],
+        direction = 0; //direction of sliding
+    $scope.slides = angular.copy( default_slides );
+    $scope.selectedSlide = 1; // initial
+
+    // function for slide changed event
+    $scope.slideChanged = function ( i ) {
+      var previous_index = i === 0 ? 2 : i - 1,
+          next_index     = i === 2 ? 0 : i + 1,
+          new_direction  = $scope.slides[ i ].nr > $scope.slides[ previous_index ].nr ? 1 : -1;
+
+      angular.copy(
+        createSlideData( new_direction, direction ),
+        $scope.slides[ new_direction > 0 ? next_index : previous_index ]
+      );
+      
+      direction = new_direction;
+    };
+    
+    // detecting where new slide will be added - before first/after last
+    var head = $scope.slides[ 0 ].nr,
+        tail = $scope.slides[ $scope.slides.length - 1 ].nr;
+
+    // creating and adding new slides
+    var createSlideData = function ( new_direction, old_direction ) {
+      var nr;
+
+      if ( new_direction === 1 ) {
+        tail = old_direction < 0 ? head + 3 : tail + 1;  
+      }
+      else {
+        head = old_direction > 0 ? tail - 3 : head - 1;
+      }
+
+      nr = new_direction === 1 ? tail : head;
+      if ( default_slides_indexes.indexOf( nr ) !== -1 ) {
+        return default_slides[ default_slides_indexes.indexOf( nr ) ];
+      };
+      return makeSlide( nr, {
+        title : 'week'
+      });
+    };
 
 });
